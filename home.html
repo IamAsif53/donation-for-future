@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define the CSS variable */
+        :root {
+            --custom-gray: rgb(249, 247, 243);
+            --green: rgb(180, 244, 97);
+            --ass:rgba(17, 17, 17, 0.05);
+        }
+
+    </style>
+    <title>Donate Bangladesh</title>
+</head>
+<body class="bg-white">
+    <div class="py-5 bg-[var(--custom-gray)]">
+        <div class="navbar container mx-auto">
+            <div class="navbar-start">
+                <button id="home" class="btn btn-active bg-[var(--green)] font-bold text-black border-0 py-1 px-5">Home</button>
+            </div>
+            <div class="navbar-center">
+                <img src="assets/logo.png" alt="">
+                <a class="btn btn-ghost text-black text-xl">Donate Bangladesh</a>
+            </div>
+            <div class="navbar-end">
+                <img src="assets/coin.png" alt="">
+                <p class="text-black text-xl"> <span>5500</span> BDT</p>
+            </div>
+        </div>
+    </div>
+    <div class="container mx-auto my-5">
+        <div class="question-answer">
+            <button id="question1" class="  font-bold text-black border-0 py-2 px-5">
+                What is Flood Relief in Bangladesh?
+            </button>
+            <div id="answer1" class="hidden text-black mt-3">
+                Flood relief efforts in Bangladesh involve providing food, clean water, shelter, and medical aid to those affected by the floods.
+            </div>
+        </div>
+    
+        <div class="question-answer">
+            <button id="question2" class="btn btn-active bg-[var(--green)] font-bold text-black border-0 py-2 px-5">
+                How can I donate to flood relief?
+            </button>
+            <div id="answer2" class="hidden text-black mt-3">
+                You can donate through our website by choosing an amount and selecting the "Donate Now" button.
+            </div>
+        </div>
+    </div>
+    
+    <script src="java2.js"></script>
+</body>
+</html>
