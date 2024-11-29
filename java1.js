@@ -1,118 +1,99 @@
-function history(){
-    window.location.href='home.html';
+// Function to load and display total credit on page load
+function loadTotalCredit() {
+    const totalCredit = localStorage.getItem('totalCredit');
+    const creditAmount = totalCredit ? parseFloat(totalCredit).toFixed(2) : "0.00";
+    document.getElementById('totalCreditDisplay').innerText = `Your Total Credit: ৳${creditAmount}`;
 }
 
-document.getElementById('blog').addEventListener('click',function(event){
-    event.preventDefault();
-    window.location.href='home.html';
-})
+// Call this function on page load
+window.addEventListener('DOMContentLoaded', loadTotalCredit);
+
+// Function to handle donation and update total amount
+function updateDonation(donationId, amountId, haveId) {
+    const addMoney = parseFloat(document.getElementById(amountId).value);
+    const totalCredit = parseFloat(localStorage.getItem('totalCredit') || "0");
+
+    console.log(addMoney);
+console.log(totalCredit);
+
+    // Validate donation amount
+    if (isNaN(addMoney) || addMoney <= 0) {
+        alert('Please enter a valid donation amount.');
+        return;
+    }
+
+    const totalAfterDonation = totalCredit - addMoney;
+    if (totalAfterDonation < 0) {
+        alert('Insufficient credits. Please check your available credits.');
+        return;
+    }
+
+    // Update the donation amount for specified cause
+    const alreadyDonated = parseFloat(document.getElementById(haveId).innerText) || 0;
+    const totalMoney = alreadyDonated + addMoney;
+    document.getElementById(haveId).innerText = totalMoney.toFixed(2);
+
+    // Update the total credit display and save to localStorage
+    document.getElementById('totalCreditDisplay').innerText = `Total Credit: ৳${totalAfterDonation.toFixed(2)}`;
+    localStorage.setItem('totalCredit', totalAfterDonation.toFixed(2));
+
+    // Optionally clear the donation input field
+    document.getElementById(amountId).value = '';
+
+    // Log donation in history
+    createHistoryEntry(addMoney, donationId);
+}
+
+
+// Event listener for the Noakhali donation button
 document.getElementById('donate-noakhali').addEventListener('click', function(event) {
     event.preventDefault();
-    console.log("iftakhar alam");
-    const addmoney = document.getElementById('give-noakhali').value;
-    const tot = document.getElementById('total').innerText;
-     const tota = parseFloat(tot) - parseFloat(addmoney);
-    if(tota<0||addmoney<0){
-        alert('Failed to add the money.');
-    }else{
-        const tota = parseFloat(tot) - parseFloat(addmoney);
-        const allreadymoney = document.getElementById('have-noakhali').innerText;
-        const totalMoney = parseFloat(allreadymoney) + parseFloat(addmoney);
-        document.getElementById('have-noakhali').innerText = totalMoney.toFixed(2);
-        document.getElementById('total').innerText=tota.toFixed(2);
-    }
+    updateDonation('Noakhali', 'give-noakhali', 'have-noakhali');
 });
 document.getElementById('donate-feni').addEventListener('click', function(event) {
     event.preventDefault();
-    console.log("iftakhar alam");
-    const addmoney = document.getElementById('give-feni').value;
-    const tot = document.getElementById('total').innerText;
-    // const tota = parseFloat(tot);
-    const tota = parseFloat(tot) - parseFloat(addmoney);
-      console.log(tota,addmoney);
-    if(tota<addmoney||addmoney<0){
-        alert('Failed to add the money.');
-    }else{
-        const tota = parseFloat(tot) - parseFloat(addmoney);
-        const allreadymoney = document.getElementById('have-feni').innerText;
-        const totalMoney = parseFloat(allreadymoney) + parseFloat(addmoney);
-        document.getElementById('have-feni').innerText = totalMoney.toFixed(2);
-        document.getElementById('total').innerText=tota.toFixed(2);
-    }
+    updateDonation('Feni', 'give-feni', 'have-feni');
 });
 document.getElementById('donate-quota').addEventListener('click', function(event) {
     event.preventDefault();
-    console.log("iftakhar alam");
-    const addmoney = document.getElementById('give-quota').value;
-    const tot = document.getElementById('total').innerText;
-     const tota = parseFloat(tot) - parseFloat(addmoney);
-    if(tota<0||addmoney<0){
-        alert('Failed to add the money.');
-    }else{
-        const tota = parseFloat(tot) - parseFloat(addmoney);
-        const allreadymoney = document.getElementById('have-quota').innerText;
-        const totalMoney = parseFloat(allreadymoney) + parseFloat(addmoney);
-        document.getElementById('have-quota').innerText = totalMoney.toFixed(2);
-        document.getElementById('total').innerText=tota.toFixed(2);
-    }
+    updateDonation('Quota', 'give-quota', 'have-quota');
 });
-document.getElementById('donation')
-    .addEventListener('click', function () {
-        this.style.backgroundColor = 'green'; 
-        document.getElementById('history').style.backgroundColor='white';
-        console.log('show add money button clicked');
-        showSectionById('donation-1');
+document.getElementById('donate-tree').addEventListener('click', function(event) {
+    event.preventDefault();
+    updateDonation('Tree', 'give-tree', 'have-tree');
+});
+document.getElementById('donate-river').addEventListener('click', function(event) {
+    event.preventDefault();
+    updateDonation('River', 'give-river', 'have-river');
 });
 
 
-document.getElementById('history')
-    .addEventListener('click', function () {
-        this.style.backgroundColor = 'green'; 
-        document.getElementById('donation').style.backgroundColor='white';
-        console.log('show history button clicked');
-        showSectionById('history-1');
-});
-function showSectionById(id){
-     document.getElementById('donation-1').classList.add('hidden');
-    document.getElementById('history-1').classList.add('hidden');    
-    document.getElementById(id).classList.remove('hidden');
+
+
+// Function to create a history entry and store in localStorage
+function createHistoryEntry(amount, donationType) {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString();
+    const entry = {
+        amount: amount,
+        cause: donationType,
+        date: `${now.toLocaleDateString()} ${timeString}`
+    };
+
+    // Save to localStorage
+    const donationHistory = JSON.parse(localStorage.getItem('donationHistory')) || [];
+    donationHistory.push(entry);
+    localStorage.setItem('donationHistory', JSON.stringify(donationHistory));
+
+    // Update history on the page, if there's a container element
+   /* const container = document.getElementById('container');
+    if (container) {
+        const newDiv = document.createElement('div');
+        newDiv.classList.add('history-entry');
+        newDiv.innerHTML = `<div>${entry.amount} Taka donated for ${donationType} <br> Date: ${entry.date}</div>`;
+        container.appendChild(newDiv);
+    }*/
 }
-document.getElementById('donate-feni').addEventListener('click', function(event) {
-    event.preventDefault();
-    const newDiv = document.createElement('div');
-    newDiv.classList.add('new-div');
-    let addmoney = document.getElementById('give-feni').value;
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0'); 
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const seconds = now.getSeconds().toString().padStart(2, '0');
-    const timeString = `${hours}:${minutes}:${seconds}`;
-    newDiv.innerHTML =`<div class="text-black text-2xl container mx-auto border-[var(--ass)] rounded-xl border-2">${addmoney} Taka donate for Flood Relief in Feni,Bangladesh <br> Date : ${timeString}</div>`
-    document.getElementById('container').appendChild(newDiv);
-});
-document.getElementById('donate-noakhali').addEventListener('click', function(event) {
-    event.preventDefault();
-    const newDiv = document.createElement('div');
-    newDiv.classList.add('new-div');
-    let addmoney = document.getElementById('give-noakhali').value;
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0'); 
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const seconds = now.getSeconds().toString().padStart(2, '0');
-    const timeString = `${hours}:${minutes}:${seconds}`;
-    newDiv.innerHTML =`<div class="text-black text-2xl container mx-auto border-[var(--ass)] rounded-xl border-2">${addmoney} Taka donate for Flood at Noakhali, Bangladesh <br> Date : ${timeString}</div>`
-    document.getElementById('container').appendChild(newDiv);
-});
-document.getElementById('donate-quota').addEventListener('click', function(event) {
-    event.preventDefault();
-    const newDiv = document.createElement('div');
-    newDiv.classList.add('new-div');
-    let addmoney = document.getElementById('give-quota').value;
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0'); 
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const seconds = now.getSeconds().toString().padStart(2, '0');
-    const timeString = `${hours}:${minutes}:${seconds}`;
-    newDiv.innerHTML =`<div class="text-black text-2xl container mx-auto border-[var(--ass)] rounded-xl border-2">${addmoney} Taka aid for Injured in the Quota Movement <br> Date : ${timeString}</div>`
-    document.getElementById('container').appendChild(newDiv);
-});
+
+// Load total credit on page load and set initial values
+loadTotalCredit();
